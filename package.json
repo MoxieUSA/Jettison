@@ -1,0 +1,13 @@
+{
+  "name": "Jettison",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "2.5.1",
+    "jade": "0.16.1",
+    "socket.io": "0.8.4",
+    "mongoose": "2.2.3",
+    "hbs": "1.0.1",
+    "gzippo": "0.0.7",
+    "everyauth": "0.2.20"
+  }
+}
