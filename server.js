@@ -1,5 +1,8 @@
+var assert = require('assert');
 var express = require('express');
 var mongoose = require('mongoose');
+
+var ldap = require('ldapjs');
 mongoose.connect('mongodb://localhost/jettison');
 var pub = __dirname + '/public';
 var app = express.createServer();
@@ -25,12 +28,34 @@ app.get('/', function(req, res) {
 var port = process.env.PORT || 3000;
 app.listen(port);
 
-var Project = require('../models/project.js');
+var Project = require('./models/project.js');
 
 var client = ldap.createClient({
-  url: 'ldap://10.100.11.139:1389'
+  url: 'ldap://10.100.11.139:389'
 });
 
-client.bind('cn=root', 'secret', function(err) {
-  assert.ifError(err);
+client.bind('CN=SubversionAuth,CN=Users,DC=MOXIEINTERACTIVE,DC=LOCAL', 'Password1', function(err, res) {
+	assert.ifError(err);
 });
+
+var opts = {
+	filter: '(objectCategory=person)',
+	scope: 'sub',
+	attributes: ['displayName', 'givenName', 'sn', 'sAMAccountName', 'mail']
+};
+
+client.search('OU=Moxie-Users,DC=MOXIEINTERACTIVE,DC=LOCAL',opts, function(err,res){
+	assert.ifError(err);
+	res.on('searchEntry', function(entry) {
+		console.log('entry: ' + JSON.stringify(entry.object));
+	});
+	res.on('searchReference', function(referral) {
+		console.log('referral: ' + referral.uris.join());
+	});
+	res.on('error', function(err) {
+		console.error('error: ' + err.message);
+	});
+	res.on('end', function(result) {
+		console.log('status: ' + result.status);
+	});
+})
