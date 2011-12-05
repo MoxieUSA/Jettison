@@ -26,3 +26,11 @@ var port = process.env.PORT || 3000;
 app.listen(port);
 
 var Project = require('../models/project.js');
+
+var client = ldap.createClient({
+  url: 'ldap://10.100.11.139:1389'
+});
+
+client.bind('cn=root', 'secret', function(err) {
+  assert.ifError(err);
+});
