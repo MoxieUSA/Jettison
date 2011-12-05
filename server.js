@@ -1,4 +1,6 @@
 var express = require('express');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/jettison');
 var pub = __dirname + '/public';
 var app = express.createServer();
 app.use(express.compiler({
